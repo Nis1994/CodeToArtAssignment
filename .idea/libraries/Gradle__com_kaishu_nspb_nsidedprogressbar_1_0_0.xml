@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.kaishu.nspb:nsidedprogressbar-1.0.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/nsidedprogressbar-1.0.0.aar/9c4f2d8c2e66141c49433095e79365e1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/nsidedprogressbar-1.0.0.aar/9c4f2d8c2e66141c49433095e79365e1/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.kaishu.nspb/nsidedprogressbar/1.0.0/58ff120bfa859c9d0e3302276256d5895a20d1f9/nsidedprogressbar-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
