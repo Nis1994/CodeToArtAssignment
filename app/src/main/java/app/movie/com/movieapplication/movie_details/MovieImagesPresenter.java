@@ -1,4 +1,4 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.movie_details;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import app.movie.com.movieapplication.models.MovieImagesResponse;
+import app.movie.com.movieapplication.networking.NetworkServiceImpl;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
@@ -14,33 +16,37 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 
+/**
+ * This class defines the calling of movie images api functionality.
+ * @author Nisha
+ */
 public class MovieImagesPresenter {
 
-    private NetworkServiceImpl service;
-    private MovieImagesView view;
-    private CompositeDisposable disposables;
+    private NetworkServiceImpl mService;
+    private MovieImagesView mMovieImagesView;
+    private CompositeDisposable mCompositeDisposable;
     @NonNull
-    protected Scheduler backgroundScheduler;
+    protected Scheduler mBackgroundScheduler;
     private Context mContext;
     @NonNull
-    private Scheduler mainScheduler;
+    private Scheduler mMainScheduler;
 
     public MovieImagesPresenter(NetworkServiceImpl service, MovieImagesView view, @NonNull Scheduler backgroundScheduler, @NonNull Scheduler mainScheduler, Context mContext) {
 
-        this.service = service;
-        this.view = view;
-        this.backgroundScheduler = backgroundScheduler;
-        this.mainScheduler = mainScheduler;
+        mService = service;
+        mMovieImagesView = view;
+        mBackgroundScheduler = backgroundScheduler;
+        mMainScheduler = mainScheduler;
         this.mContext = mContext;
-        this.disposables = new CompositeDisposable();
+        mCompositeDisposable = new CompositeDisposable();
     }
 
     public void requestMoviePosters(int movieId, String apiKey) {
 
-        view.showWait();
-        Disposable disposable = service.requestMoviePosters(movieId, apiKey)
-                .subscribeOn(backgroundScheduler)
-                .observeOn(mainScheduler)
+        mMovieImagesView.showWait();
+        Disposable disposable = mService.requestMoviePosters(movieId, apiKey)
+                .subscribeOn(mBackgroundScheduler)
+                .observeOn(mMainScheduler)
                 .onErrorResumeNext(new Function<Throwable, ObservableSource<? extends MovieImagesResponse>>() {
                     @Override
                     public ObservableSource<? extends MovieImagesResponse> apply(Throwable throwable) throws Exception {
@@ -52,12 +58,12 @@ public class MovieImagesPresenter {
                     @Override
                     public void onNext(MovieImagesResponse movieImagesResponse) {
                         Log.d("MovieListData", "Response : " + new Gson().toJson(movieImagesResponse));
-                        view.onSuccessMoviePostersApi(movieImagesResponse);
+                        mMovieImagesView.onSuccessMoviePostersApi(movieImagesResponse);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        view.removeWait();
+                        mMovieImagesView.removeWait();
                         Log.d("Error Message : ", "" + e.getMessage());
                     }
 
@@ -67,6 +73,6 @@ public class MovieImagesPresenter {
                     }
 
                 });
-        disposables.add(disposable);
+        mCompositeDisposable.add(disposable);
     }
 }

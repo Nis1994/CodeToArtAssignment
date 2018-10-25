@@ -1,5 +1,8 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.networking;
 
+import app.movie.com.movieapplication.models.MovieDetailsResponse;
+import app.movie.com.movieapplication.models.MovieImagesResponse;
+import app.movie.com.movieapplication.models.MovieListData;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -14,6 +17,6 @@ public interface NetworkService {
     Observable<MovieDetailsResponse> requestMovieDetails(@Path("movie-id") int movieId, @Query("api_key") String apiKey);
 
     @GET("movie/{movie-id}/images")
-    Observable<MovieImagesResponse> requestMoviePosters(@Path("movie-id") int movieId,@Query("api_key") String apiKey);
+    Observable<MovieImagesResponse> requestMoviePosters(@Path("movie-id") int movieId, @Query("api_key") String apiKey);
 
 }

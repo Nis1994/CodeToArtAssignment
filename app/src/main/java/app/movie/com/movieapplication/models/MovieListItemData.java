@@ -1,4 +1,4 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.models;
 
 public class MovieListItemData {
 

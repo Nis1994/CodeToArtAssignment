@@ -1,6 +1,8 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.networking;
 
 /**
+ * This class defines all the entities required for network calling.
+ * @author Nisha
  */
 
 
@@ -11,6 +13,7 @@ import java.io.IOException;
 
 import javax.inject.Singleton;
 
+import app.movie.com.movieapplication.BuildConfig;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.Cache;

@@ -1,6 +1,10 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.networking;
 
 import javax.inject.Singleton;
+
+import app.movie.com.movieapplication.movie_details.MovieDetailsActivity;
+import app.movie.com.movieapplication.movie_list.MovieListActivity;
+import app.movie.com.movieapplication.networking.NetworkModule;
 import dagger.Component;
 
 

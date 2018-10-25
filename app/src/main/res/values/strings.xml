@@ -2,4 +2,14 @@
     <string name="app_name">Movie Application</string>
     <string name="upcoming_movies">Upcoming Movies</string>
     <string name="list_of_movies">List Of Movies</string>
+    <string name="developed_by_nisha_chaudhari">Developed by Nisha Chaudhari</string>
+    <string name="hello">Hello..</string>
+    <string name="title">Title</string>
+    <string name="overview">Overview</string>
+    <string name="the_battle">The Battle</string>
+    <string name="_28_12_2014">28/12/2014</string>
+    <string name="u_a">U/A</string>
+    <string name="forwardimage">forwardImage</string>
+    <string name="movieimage">movieImage</string>
+    <string name="infoicon">infoIcon</string>
 </resources>

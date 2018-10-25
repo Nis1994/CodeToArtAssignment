@@ -1,8 +1,15 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.networking;
 
+import app.movie.com.movieapplication.models.MovieDetailsResponse;
+import app.movie.com.movieapplication.models.MovieImagesResponse;
+import app.movie.com.movieapplication.models.MovieListData;
 import io.reactivex.Observable;
 
-
+/**
+ * This class handles all the network operation used in this app.
+ * @author Nisha
+ *
+ */
 public class NetworkServiceImpl implements NetworkService {
 
     private final NetworkService networkService;

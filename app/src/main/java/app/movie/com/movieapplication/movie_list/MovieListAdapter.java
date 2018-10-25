@@ -1,4 +1,4 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.movie_list;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,14 +12,18 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import app.movie.com.movieapplication.movie_details.MovieDetailsActivity;
+import app.movie.com.movieapplication.R;
+import app.movie.com.movieapplication.models.Result;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyViewHolder> {
 
-    Activity activity;
-    private ArrayList<Result> moviesList;
-    String imageUrl = "https://image.tmdb.org/t/p/w500";
+    Activity mActivity;
+    private ArrayList<Result> mMoviesList;
+    String mImageUrl = "https://image.tmdb.org/t/p/w500";
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -45,8 +49,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyVi
     }
 
     public MovieListAdapter(ArrayList<Result> moviesList, Activity activity) {
-        this.moviesList = moviesList;
-        this.activity = activity;
+        this.mMoviesList = moviesList;
+        mActivity = activity;
     }
 
     @Override
@@ -59,10 +63,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyVi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        final Result movie = moviesList.get(position);
+        final Result movie = mMoviesList.get(position);
         holder.txtMovieName.setText(movie.getTitle());
         holder.txtDate.setText(movie.getReleaseDate());
-        String url = imageUrl + movie.getPosterPath();
+        String url = mImageUrl + movie.getPosterPath();
         System.out.println("Image Url : " + url);
 
         Picasso.get().load(url)
@@ -76,15 +80,15 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyVi
         holder.imgForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent movieDetailIntent = new Intent(activity, MovieDetailsActivity.class);
+                Intent movieDetailIntent = new Intent(mActivity, MovieDetailsActivity.class);
                 movieDetailIntent.putExtra("MovieId", movie.getId());
-                activity.startActivity(movieDetailIntent);
+                mActivity.startActivity(movieDetailIntent);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        return mMoviesList.size();
     }
 }

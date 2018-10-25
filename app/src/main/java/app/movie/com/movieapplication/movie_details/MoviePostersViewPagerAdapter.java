@@ -1,4 +1,4 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.movie_details;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -12,22 +12,24 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ViewPagerAdapter extends PagerAdapter {
+import app.movie.com.movieapplication.R;
 
-    private Context context;
-    private LayoutInflater layoutInflater;
-    private ArrayList<String> images;
-    String imageUrl = "https://image.tmdb.org/t/p/w500";
+public class MoviePostersViewPagerAdapter extends PagerAdapter {
+
+    private Context mContext;
+    private LayoutInflater mLayoutInflater;
+    private ArrayList<String> mMoviePostersList;
+    String mImageUrl = "https://image.tmdb.org/t/p/w500";
 
 
-    public ViewPagerAdapter(Context context, ArrayList<String> images) {
-        this.context = context;
-        this.images = images;
+    public MoviePostersViewPagerAdapter(Context context, ArrayList<String> images) {
+        mContext = context;
+        mMoviePostersList = images;
     }
 
     @Override
     public int getCount() {
-        return images.size();
+        return mMoviePostersList.size();
     }
 
     @Override
@@ -38,14 +40,13 @@ public class ViewPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
 
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.dots_layout, null);
+        mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = mLayoutInflater.inflate(R.layout.dots_layout, null);
         ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
-        String url = imageUrl + images.get(position);
+        String url = mImageUrl + mMoviePostersList.get(position);
         System.out.println("Image Url : " + url);
         Picasso.get().load(url)
                 .into(imageView);
-//        imageView.setImageResource(images.get(position));
 
         ViewPager vp = (ViewPager) container;
         vp.addView(view, 0);

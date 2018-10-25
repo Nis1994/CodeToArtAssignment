@@ -1,4 +1,4 @@
-package app.movie.com.movieapplication;
+package app.movie.com.movieapplication.movie_details;
 
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
@@ -11,18 +11,31 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import app.movie.com.movieapplication.networking.DaggerDeps;
+import app.movie.com.movieapplication.networking.Deps;
+import app.movie.com.movieapplication.information.InformationActivity;
+import app.movie.com.movieapplication.models.MovieDetailsResponse;
+import app.movie.com.movieapplication.models.MovieImagesResponse;
+import app.movie.com.movieapplication.networking.NetworkModule;
+import app.movie.com.movieapplication.networking.NetworkServiceImpl;
+import app.movie.com.movieapplication.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class MovieDetailsActivity extends AppCompatActivity implements MovieDetailsView, MovieImagesView ,View.OnClickListener{
+/**
+ * This class defines the functionality of displaying detailed information of movie.
+ * @author Nisha
+ */
+public class MovieDetailsActivity extends AppCompatActivity implements MovieDetailsView, MovieImagesView,View.OnClickListener{
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
@@ -51,18 +64,20 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
     @BindView(R.id.imgInfo)
     ImageView imgInfo;
 
-    private int dotscount;
-    private ImageView[] dots;
-
-    MovieDetailsPresenter movieDetailsPresenter;
-    MovieImagesPresenter movieImagesPresenter;
     @Inject
-    public NetworkServiceImpl service;
-    private Deps deps;
-    String apiKey = "2f8c528717c7e456632a1c2737ca1540";
+    public NetworkServiceImpl mService;
+
+    private int mDotscount;
+    private ImageView[] mDots;
+
+    private MovieDetailsPresenter mMovieDetailsPresenter;
+    private MovieImagesPresenter mMovieImagesPresenter;
+
+    private Deps mDeps;
+    String mApiKey = "2f8c528717c7e456632a1c2737ca1540";
     int mMovieId;
-    private ArrayList<String> images;
-    ViewPagerAdapter viewPagerAdapter;
+    private ArrayList<String> mMoviePostersList;
+    private MoviePostersViewPagerAdapter mViewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,14 +88,14 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
         Intent intent = getIntent();
         mMovieId = intent.getIntExtra("MovieId", 0);
         File cacheFile = new File(getCacheDir(), "responses");
-        deps = DaggerDeps.builder().networkModule(new NetworkModule(cacheFile)).build();
-        deps.inject(this);
-        images = new ArrayList<>();
-        movieDetailsPresenter = new MovieDetailsPresenter(service, this, Schedulers.io(), AndroidSchedulers.mainThread(), this);
-        movieDetailsPresenter.requestMovieDetails(mMovieId, apiKey);
-        movieImagesPresenter = new MovieImagesPresenter(service, this, Schedulers.io(), AndroidSchedulers.mainThread(), this);
-        movieImagesPresenter.requestMoviePosters(mMovieId, apiKey);
-        viewPagerAdapter = new ViewPagerAdapter(this, images);
+        mDeps = DaggerDeps.builder().networkModule(new NetworkModule(cacheFile)).build();
+        mDeps.inject(this);
+        mMoviePostersList = new ArrayList<>();
+        mMovieDetailsPresenter = new MovieDetailsPresenter(mService, this, Schedulers.io(), AndroidSchedulers.mainThread(), this);
+        mMovieDetailsPresenter.requestMovieDetails(mMovieId, mApiKey);
+        mMovieImagesPresenter = new MovieImagesPresenter(mService, this, Schedulers.io(), AndroidSchedulers.mainThread(), this);
+        mMovieImagesPresenter.requestMoviePosters(mMovieId, mApiKey);
+        mViewPagerAdapter = new MoviePostersViewPagerAdapter(this, mMoviePostersList);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -91,10 +106,10 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
             @Override
             public void onPageSelected(int position) {
 
-                for (int i = 0; i < dotscount; i++) {
-                    dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+                for (int i = 0; i < mDotscount; i++) {
+                    mDots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
                 }
-                dots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+                mDots[position].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
             }
 
             @Override
@@ -105,48 +120,65 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
 
     }
 
+    /**
+     * This method shows progress bar on network call.
+     */
     @Override
     public void showWait() {
         mainLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-
     }
 
+    /**
+     * This method hides progress bar on completion of network call.
+     */
     @Override
     public void removeWait() {
         mainLayout.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
-
     }
 
+    /**
+     * This method shows Error message on failure of network call.
+     * @param appErrorMessage
+     */
     @Override
     public void onFailure(String appErrorMessage) {
+        Toast.makeText(this, "appErrorMessage", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * This method shows the successful api response of the images api and evaluate the response.
+     * @param movieImagesResponse
+     */
     @Override
     public void onSuccessMoviePostersApi(MovieImagesResponse movieImagesResponse) {
         for (int i = 0; i <= 4; i++) {
-            images.add(movieImagesResponse.getPosters().get(i).getFilePath());
+            mMoviePostersList.add(movieImagesResponse.getPosters().get(i).getFilePath());
         }
-        viewPager.setAdapter(viewPagerAdapter);
-        dotscount = viewPagerAdapter.getCount();
-        dots = new ImageView[dotscount];
+        viewPager.setAdapter(mViewPagerAdapter);
+        mDotscount = mViewPagerAdapter.getCount();
+        mDots = new ImageView[mDotscount];
 
-        for (int i = 0; i < dotscount; i++) {
+        for (int i = 0; i < mDotscount; i++) {
 
-            dots[i] = new ImageView(this);
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
+            mDots[i] = new ImageView(this);
+            mDots[i].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.non_active_dot));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMargins(8, 0, 8, 0);
 
-            linearLayout.addView(dots[i], params);
+            linearLayout.addView(mDots[i], params);
         }
 
-        dots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
+        mDots[0].setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_dot));
 
     }
 
+    /**
+     * This method defines the successful api response for the movie detail api.
+     * @param movieDetailsResponse
+     */
     @Override
     public void onSuccessMovieDetailsApi(MovieDetailsResponse movieDetailsResponse) {
 
